@@ -1,0 +1,13 @@
+query GetUsers {
+  users {
+    email
+    id
+    userName
+  }
+}
+
+mutation CreateUser($createUserInput: CreateUserInput!) {
+  createUser(createUserInput: $createUserInput) {
+    id
+  }
+}

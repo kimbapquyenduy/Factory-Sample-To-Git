@@ -1,0 +1,26 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateUserInput {
+  email: String!
+  userName: String!
+}
+
+type CreateUserRecipe {
+  id: String!
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): CreateUserRecipe!
+}
+
+type Query {
+  users: [UserRecipe!]!
+}
+
+type UserRecipe {
+  email: String!
+  id: String!
+  userName: String!
+}

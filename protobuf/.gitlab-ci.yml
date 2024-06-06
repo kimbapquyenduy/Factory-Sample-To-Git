@@ -1,0 +1,23 @@
+variables:
+  GIT_STRATEGY: fetch
+  DOCKER_DRIVER: overlay2
+
+stages:
+  - deploy
+
+publish-npm:
+  image: node:latest
+  stage: deploy
+  script:
+    - echo "@clv-factory:registry=http://gitlab.cyberlogitec.com.vn/api/v4/projects/727/packages/npm/" > .npmrc
+    - echo "//gitlab.cyberlogitec.com.vn/api/v4/projects/727/packages/npm/:_authToken=WA14PGuXXQQfF4UnDS9n" >> .npmrc
+    - yarn install
+    - chmod +x ./scripts/copy_grpc.sh
+    - yarn run build:prod
+    - npm publish
+  environment: production
+  # tags:
+  #   - factory-protobuf
+    # - docker-runner
+  # only: 
+  #   - develop

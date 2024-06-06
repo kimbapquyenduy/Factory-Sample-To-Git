@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package app.payment.user.service.v1;
+
+import "app/payment/base/user/v1/user.proto";
+
+// Request message for `UserService.GetUsers`.
+message GetUsersRequest {}
+
+// Response message for `UserService.GetUsers`.
+message GetUsersResponse {
+  // The user information list
+  repeated app.payment.base.user.v1.UserModel users = 1;
+}
+
+// Request message for `UserService.CreateUser`.
+message CreateUserRequest {
+  // The user name
+  string user_name = 2;
+  // The email
+  string email = 3;
+}
+
+// Response message for `UserService.CreateUser`.
+message CreateUserResponse {
+  // The user id
+  string id = 1;
+}
+
+// User Service
+service UserService {
+  /**
+     Get GetUsers
+     Request:
+     {
+     }
+
+     Response:
+     {
+     	   "users": [
+     	   	{
+     	   		"id": "id",
+     	   		"userName": "user name",
+     	   		"email": "user@email.com"
+     	   	}
+     	   ]
+     }
+  */
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse);
+
+  /**
+     Create User
+     Request:
+     {
+        "userName": "user name",
+     	  "email": "user@email.com"
+     }
+
+     Response:
+     {
+        "id": "id"
+     }
+  */
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+}

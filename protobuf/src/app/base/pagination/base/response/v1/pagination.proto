@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package app.base.pagination.base.response.v1;
+
+//Imported data from MRP service
+message OffsetPaginationResponseModel {
+  //Current page. Ex: 1
+  int32 page = 1;
+  //Number of taken item. Ex: 100
+  int32 take = 2;
+  //Total received items
+  int32 item_count = 3;
+  //Total pages. Ex: 8
+  int32 page_count = 4;
+  //Is there a previous page?. Ex: True
+  bool has_previous_page = 5;
+  //Is there a next page?. Ex: True
+  bool has_next_page = 6;
+}

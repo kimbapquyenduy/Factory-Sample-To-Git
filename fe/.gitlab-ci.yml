@@ -1,0 +1,78 @@
+stages:
+  - build
+  - deploy
+  - clean
+
+variables:
+  GIT_STRATEGY: fetch
+  DOCKER_DRIVER: overlay2
+
+build-source-dev:
+  stage: build
+  tags:
+    - factory-mes-uat
+  script:
+    - sed -i "s/NEXT_PUBLIC_BFF_URL=.*/NEXT_PUBLIC_BFF_URL=${NEXT_PUBLIC_DEV_BFF_URL}/g" .env.production
+    - sed -i "s/NEXT_PUBLIC_PORTAL_URL=.*/NEXT_PUBLIC_PORTAL_URL=${NEXT_PUBLIC_DEV_PORTAL_URL}/g" .env.production
+    - docker build --label MES-FE-DEV --network host . -t fac-dev-mes-fe
+  only:
+    - develop
+
+deploy-source-dev:
+  stage: deploy
+  tags:
+    - factory-mes-uat
+  script:
+    - docker rm -f fac-dev-mes-fe || true
+    - docker run -d -p $MES_FE_DEV_PORT:3000 ${MES_DEV_LOG_OPTIONS} --name=fac-dev-mes-fe --restart always fac-dev-mes-fe
+  only:
+    - develop
+
+cleanup-dev:
+  stage: clean
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - docker image prune -f --filter "label=MES-FE-DEV"
+  needs:
+    - deploy-source-dev
+  tags:
+    - factory-mes-uat
+  only:
+    - develop
+
+build-source-uat:
+  stage: build
+  tags:
+    - factory-mes-uat
+  script:
+    - sed -i "s/NEXT_PUBLIC_BFF_URL=.*/NEXT_PUBLIC_BFF_URL=${NEXT_PUBLIC_UAT_BFF_URL}/g" .env.production
+    - sed -i "s/NEXT_PUBLIC_PORTAL_URL=.*/NEXT_PUBLIC_PORTAL_URL=${NEXT_PUBLIC_UAT_PORTAL_URL}/g" .env.production
+    - docker build --label MES-FE-UAT --network host . -t fac-uat-mes-fe
+  only:
+    - uat
+
+deploy-source-uat:
+  stage: deploy
+  tags:
+    - factory-mes-uat
+  script:
+    - docker rm -f fac-uat-mes-fe || true
+    - docker run -d -p $MES_FE_UAT_PORT:3000 ${MES_FE_UAT_LOG_OPTIONS} --name=fac-uat-mes-fe --restart always fac-uat-mes-fe
+  only:
+    - uat
+
+cleanup-uat:
+  stage: clean
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - docker image prune -f --filter "label=MES-FE-UAT"
+  needs:
+    - deploy-source-uat
+  tags:
+    - factory-mes-uat
+  only:
+    - uat

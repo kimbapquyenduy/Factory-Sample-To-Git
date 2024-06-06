@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package app.base.pagination.base.request.v1;
+
+//Pagination options model
+message OffsetPaginationRequestModel {
+  //Data ordering. Ex: ASC/DESC
+  string order = 1;
+  //Page number. Ex: 2
+  int32 page = 2;
+  //Total received items
+  int32 take = 3;
+  //Total skipped items
+  int32 skip = 4;
+}

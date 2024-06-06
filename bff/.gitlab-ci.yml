@@ -1,0 +1,90 @@
+stages:
+  - build
+  - deploy
+  - clean
+
+variables:
+  GIT_STRATEGY: fetch
+  DOCKER_DRIVER: overlay2
+
+build-source-dev:
+  stage: build
+  tags:
+    - factory-bff-uat
+  script:
+    - docker build --label FACTORY-BFF-DEV 
+      --build-arg PORT=$DEV_FACTORY_BFF_PORT 
+      --build-arg LGS_DOMAIN_HOST=$DEV_LGS_DOMAIN_HOST 
+      --build-arg LGS_DOMAIN_PORT=$DEV_LGS_DOMAIN_PORT 
+      --build-arg MES_DOMAIN_HOST=$DEV_MES_DOMAIN_HOST 
+      --build-arg MES_DOMAIN_PORT=$DEV_MES_DOMAIN_PORT 
+      --build-arg AUTH_DOMAIN_HOST=$DEV_AUTH_DOMAIN_HOST 
+      --build-arg AUTH_DOMAIN_PORT=$DEV_AUTH_DOMAIN_PORT 
+      --network host . -t fac-dev-bff
+  only:
+    - develop
+
+deploy-source-dev:
+  stage: deploy
+  tags:
+    - factory-bff-uat
+  script:
+    - docker rm -f fac-dev-bff || true
+    - docker run -d --network host --name=fac-dev-bff --restart always fac-dev-bff
+  only:
+    - develop
+
+cleanup-dev:
+  stage: clean
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - docker image prune -f --filter "label=FACTORY-BFF-DEV"
+  needs:
+    - deploy-source-dev
+  tags:
+    - factory-bff-uat
+  only:
+    - develop
+
+build-source-uat:
+  stage: build
+  tags:
+    - factory-bff-uat
+  script:
+    - docker build --label FACTORY-BFF-UAT 
+      --build-arg PORT=$UAT_FACTORY_BFF_PORT 
+      --build-arg LGS_DOMAIN_HOST=$UAT_LGS_DOMAIN_HOST 
+      --build-arg LGS_DOMAIN_PORT=$UAT_LGS_DOMAIN_PORT 
+      --build-arg MES_DOMAIN_HOST=$UAT_MES_DOMAIN_HOST 
+      --build-arg MES_DOMAIN_PORT=$UAT_MES_DOMAIN_PORT 
+      --build-arg AUTH_DOMAIN_HOST=$UAT_AUTH_DOMAIN_HOST
+      --build-arg AUTH_DOMAIN_PORT=$UAT_AUTH_DOMAIN_PORT
+      --network host . -t fac-uat-bff
+  only:
+    - uat
+
+deploy-source-uat:
+  stage: deploy
+  tags:
+    - factory-bff-uat
+  script:
+    - docker rm -f fac-uat-bff || true
+    - docker run -d --network host --name=fac-uat-bff --restart always fac-uat-bff
+  only:
+    - uat
+
+cleanup-uat:
+  stage: clean
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - docker image prune -f --filter "label=FACTORY-BFF-UAT"
+  needs:
+    - deploy-source-uat
+  tags:
+    - factory-bff-uat
+  only:
+    - uat

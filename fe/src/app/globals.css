@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* :root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+} */
+
+/* @media (prefers-color-scheme: light) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+} */
+
+/* body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+} */
+
+.action-bar-btn {
+  @apply text-[#1F2A37] bg-white border-gray-200 border-[1px] min-w-[151px] h-[41px] px-[10px] py-[20px] w-fit;
+}
+
+.co-table-row {
+  @apply whitespace-nowrap font-medium text-gray-900 dark:text-white;
+}
+
+.co-table-header-row {
+  @apply text-gray-500;
+}
